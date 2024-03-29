@@ -28,8 +28,7 @@ public final class ContextTemplateModel {
         return new ContextTemplateModel(context);
     }
 
-
-    public Long getUpdateCount() {
+    public Integer getUpdateCount() {
         return context.getUpdateCount();
     }
 }

@@ -8,6 +8,7 @@ plugins {
     id 'jacoco'
     id 'com.diffplug.spotless' version '6.25.0'
     id 'org.wiremock.tools.gradle.wiremock-extension-convention' version '0.1.2'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
 }
 
 group 'org.wiremock.extensions'
@@ -17,8 +18,15 @@ project.ext {
     ]
 }
 
+
+sourceSets {
+    test.java.srcDirs += 'src/test/java'
+    test.kotlin.srcDirs += 'src/test/kotlin'
+}
+
 dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:${versions.caffeine}")
+    implementation("org.wiremock:wiremock:3.3.3")
     implementation("com.github.jknack:handlebars-helpers:${versions.handlebars}") {
         exclude group: 'org.mozilla', module: 'rhino'
     }
@@ -32,6 +40,15 @@ shadowJar {
 test {
     finalizedBy jacocoTestReport
 }
+
+kotlin {
+    jvmToolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+        implementation = JvmImplementation.J9
+    }
+}
+
+
 jacocoTestReport {
     dependsOn test
     reports {

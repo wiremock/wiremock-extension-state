@@ -47,6 +47,8 @@ import static org.wiremock.extensions.state.internal.ExtensionLogger.logger;
  */
 public class DeleteStateEventListener implements ServeEventListener, StateExtensionMixin {
 
+    public final static String NAME =  "deleteState";
+
     private final TemplateEngine templateEngine;
     private final ContextManager contextManager;
 
@@ -58,7 +60,7 @@ public class DeleteStateEventListener implements ServeEventListener, StateExtens
 
     @Override
     public String getName() {
-        return "deleteState";
+        return NAME;
     }
 
     @Override

@@ -26,7 +26,7 @@ public class Context {
     private final Map<String, String> properties = new HashMap<>();
     private final LinkedList<Map<String, String>> list = new LinkedList<>();
     private final LinkedList<String> requests = new LinkedList<>();
-    private Long updateCount = 0L;
+    private Integer updateCount = 0;
 
     public Context(Context other) {
         this.contextName = other.contextName;
@@ -44,11 +44,11 @@ public class Context {
         return contextName;
     }
 
-    public Long getUpdateCount() {
+    public Integer getUpdateCount() {
         return updateCount;
     }
 
-    public Long incUpdateCount() {
+    public Integer incUpdateCount() {
         updateCount = updateCount + 1;
         return updateCount;
     }

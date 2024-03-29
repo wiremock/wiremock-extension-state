@@ -311,7 +311,7 @@ The state is recorded in `serveEventListeners` of a stub. The following function
     - to delete a selective property, set it to `null` (as string).
 - `list` : stores a state in a list. Can be used to prepend/append new states to an existing list. List elements cannot be modified (only read/deleted).
 
-`state` and `list` can be used in the same `ServeEventListener` (would count as ONE updates). Adding multiple `recordState` `ServeEventListener` is supported.
+`state` and `list` can be used in the same `ServeEventListener` (would count as ONE update). Adding multiple `recordState` `ServeEventListener` is supported.
 
 The following parameters have to be provided:
 

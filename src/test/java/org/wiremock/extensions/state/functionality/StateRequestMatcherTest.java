@@ -17,7 +17,6 @@ package org.wiremock.extensions.state.functionality;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Json;
-import com.github.tomakehurst.wiremock.common.Pair;
 import com.github.tomakehurst.wiremock.extension.Parameters;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
@@ -33,15 +32,14 @@ import org.junit.jupiter.api.TestFactory;
 
 import java.net.URI;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static com.github.tomakehurst.wiremock.common.Pair.pair;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -546,12 +544,12 @@ class StateRequestMatcherTest extends AbstractTestBase {
                     getAndAssertContextMatcher(context, HttpStatus.SC_OK);
                 }
 
-                @DisplayName("succeeds on invalid configuration")
+                @DisplayName("fails on invalid configuration")
                 @Test
                 void test_countInvalid_fail() {
                     createGetStub("updateCountEqualTo", "invalid");
 
-                    getAndAssertContextMatcher(context, HttpStatus.SC_NOT_FOUND);
+                    getAndAssertContextMatcher(context, HttpStatus.SC_INTERNAL_SERVER_ERROR);
                 }
 
                 @DisplayName("fails on non-matching count")
@@ -575,12 +573,12 @@ class StateRequestMatcherTest extends AbstractTestBase {
                     getAndAssertContextMatcher(context, HttpStatus.SC_OK);
                 }
 
-                @DisplayName("succeeds on invalid configuration")
+                @DisplayName("fails on invalid configuration")
                 @Test
                 void test_countInvalid_fail() {
                     createGetStub("updateCountLessThan", "invalid");
 
-                    getAndAssertContextMatcher(context, HttpStatus.SC_NOT_FOUND);
+                    getAndAssertContextMatcher(context, HttpStatus.SC_INTERNAL_SERVER_ERROR);
                 }
 
                 @DisplayName("fails on non-matching count")
@@ -604,12 +602,12 @@ class StateRequestMatcherTest extends AbstractTestBase {
                     getAndAssertContextMatcher(context, HttpStatus.SC_OK);
                 }
 
-                @DisplayName("succeeds on invalid configuration")
+                @DisplayName("fails on invalid configuration")
                 @Test
                 void test_countInvalid_fail() {
                     createGetStub("updateCountMoreThan", "invalid");
 
-                    getAndAssertContextMatcher(context, HttpStatus.SC_NOT_FOUND);
+                    getAndAssertContextMatcher(context, HttpStatus.SC_INTERNAL_SERVER_ERROR);
                 }
 
                 @DisplayName("fails on non-matching count")
@@ -649,12 +647,12 @@ class StateRequestMatcherTest extends AbstractTestBase {
                     getAndAssertContextMatcher(context, HttpStatus.SC_OK);
                 }
 
-                @DisplayName("succeeds on invalid configuration")
+                @DisplayName("fails on invalid configuration")
                 @Test
                 void test_countInvalid_fail() {
                     createGetStub("listSizeEqualTo", "invalid");
 
-                    getAndAssertContextMatcher(context, HttpStatus.SC_NOT_FOUND);
+                    getAndAssertContextMatcher(context, HttpStatus.SC_INTERNAL_SERVER_ERROR);
                 }
 
                 @DisplayName("fails on non-matching count")
@@ -678,12 +676,12 @@ class StateRequestMatcherTest extends AbstractTestBase {
                     getAndAssertContextMatcher(context, HttpStatus.SC_OK);
                 }
 
-                @DisplayName("succeeds on invalid configuration")
+                @DisplayName("fails on invalid configuration")
                 @Test
                 void test_countInvalid_fail() {
                     createGetStub("listSizeLessThan", "invalid");
 
-                    getAndAssertContextMatcher(context, HttpStatus.SC_NOT_FOUND);
+                    getAndAssertContextMatcher(context, HttpStatus.SC_INTERNAL_SERVER_ERROR);
                 }
 
                 @DisplayName("fails on non-matching count")
@@ -707,12 +705,12 @@ class StateRequestMatcherTest extends AbstractTestBase {
                     getAndAssertContextMatcher(context, HttpStatus.SC_OK);
                 }
 
-                @DisplayName("succeeds on invalid configuration")
+                @DisplayName("fails on invalid configuration")
                 @Test
                 void test_countInvalid_fail() {
                     createGetStub("listSizeMoreThan", "invalid");
 
-                    getAndAssertContextMatcher(context, HttpStatus.SC_NOT_FOUND);
+                    getAndAssertContextMatcher(context, HttpStatus.SC_INTERNAL_SERVER_ERROR);
                 }
 
                 @DisplayName("fails on non-matching count")

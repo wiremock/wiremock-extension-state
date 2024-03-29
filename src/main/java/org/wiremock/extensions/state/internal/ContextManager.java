@@ -135,8 +135,8 @@ public class ContextManager {
         });
     }
 
-    public Long numUpdates(String contextName) {
-        return store.get(createContextKey(contextName)).map(it -> ((Context) it).getUpdateCount()).orElse(0L);
+    public Integer numUpdates(String contextName) {
+        return store.get(createContextKey(contextName)).map(it -> ((Context) it).getUpdateCount()).orElse(0);
     }
 
     private String getContextNameFromContextKey(String key) {

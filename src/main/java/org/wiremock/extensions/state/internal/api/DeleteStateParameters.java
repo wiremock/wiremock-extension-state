@@ -103,6 +103,13 @@ public class DeleteStateParameters {
             private String property;
             private String value;
 
+            public Where() {
+            }
+            public Where(String property, String value) {
+                this.property = property;
+                this.value = value;
+            }
+
             public String getProperty() {
                 return property;
             }

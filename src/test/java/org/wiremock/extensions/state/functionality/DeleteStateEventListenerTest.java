@@ -17,6 +17,7 @@ package org.wiremock.extensions.state.functionality;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.extension.Parameters;
+import com.github.tomakehurst.wiremock.extension.ServeEventListenerDefinition;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
+import org.wiremock.extensions.state.extensions.builder.DeleteStateEventListenerBuilder;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -94,6 +96,17 @@ class DeleteStateEventListenerTest extends AbstractTestBase {
                     "deleteState",
                     Parameters.from(configuration)
                 )
+        );
+    }
+    private void createGetStub(ServeEventListenerDefinition listenerDefinition) {
+        wm.stubFor(
+            get(urlPathMatching("/state/[^/]+"))
+                .willReturn(
+                    WireMock.ok()
+                        .withHeader("content-type", "application/json")
+                        .withBody("{}")
+                )
+                .withServeEventListener(listenerDefinition)
         );
     }
 
@@ -548,6 +561,16 @@ class DeleteStateEventListenerTest extends AbstractTestBase {
 
                     assertThat(contextManager.getContextCopy(contextName)).isEmpty();
                 }
+
+                @DisplayName("deletes context with builder")
+                @Test
+                void test_deleteContext_builder() {
+                    createGetStub(DeleteStateEventListenerBuilder.context( "{{request.pathSegments.[1]}}").build());
+                    getContext(contextName, HttpStatus.SC_OK, (result) -> assertThat(result).isEmpty());
+
+                    assertThat(contextManager.getContextCopy(contextName)).isEmpty();
+                }
+
 
                 @DisplayName("double deletion does not cause an error")
                 @Test
