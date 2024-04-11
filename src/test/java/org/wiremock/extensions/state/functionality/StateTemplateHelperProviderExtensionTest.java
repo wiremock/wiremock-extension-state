@@ -60,7 +60,7 @@ class StateTemplateHelperProviderExtensionTest extends AbstractTestBase {
     private void getContext(String contextName, Consumer<Map<String, Object>> assertion) {
         Map<String, Object> result = given()
             .accept(ContentType.JSON)
-            .get(assertDoesNotThrow(() -> new URI(String.format("%s/%s/%s", wm.getRuntimeInfo().getHttpBaseUrl(), "contexturl", contextName))))
+            .get(assertDoesNotThrow(() -> new URI(String.format("%s/%s/%s?contextName=%s", wm.getRuntimeInfo().getHttpBaseUrl(), "contexturl", contextName, contextName))))
             .then()
             .statusCode(HttpStatus.SC_OK)
             .extract().body().as(mapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
@@ -165,6 +165,7 @@ class StateTemplateHelperProviderExtensionTest extends AbstractTestBase {
     public class ConfigurationErrors {
 
         private final String contextName = "contextName";
+
         @DisplayName("fails on missing context")
         @Test
         public void test_missingContext_fail() {
@@ -561,11 +562,42 @@ class StateTemplateHelperProviderExtensionTest extends AbstractTestBase {
         }
     }
 
+    @DisplayName("with request query")
+    @Nested
+    public class RequestQuery {
+
+        private final String contextName = "aContextName";
+
+        @DisplayName("works for context")
+        @Test
+        void test_contextFromQuery() {
+            Map<String, Object> request = Map.of("contextValue", "aContextValue");
+            createContextStatePostStub(Map.of("contextValue", "{{jsonPath request.body '$.contextValue'}}"));
+            createContextGetStub(Map.of("contextValue", "{{state context=request.query.contextName property='contextValue'}}"));
+
+            postContext(contextName, request);
+            getContext(contextName, (result) -> assertThat(result).containsExactlyEntriesOf(request));
+        }
+
+        @DisplayName("works for property")
+        @Test
+        void test_contextFromProperty() {
+            Map<String, Object> request = Map.of("contextValue", "aContextValue");
+            createContextStatePostStub(Map.of(contextName, "{{jsonPath request.body '$.contextValue'}}"));
+            createContextGetStub(Map.of("contextValue", String.format("{{state context=request.query.contextName property='%s'}}", contextName)));
+
+            postContext(contextName, request);
+            getContext(contextName, (result) -> assertThat(result).containsExactlyEntriesOf(request));
+        }
+
+    }
+
     @DisplayName("with existing property")
     @Nested
     public class ExistingProperty {
 
         private final String contextName = "aContextName";
+
 
         @DisplayName("returns property from previous request")
         @Test
