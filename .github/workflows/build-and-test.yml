@@ -70,3 +70,26 @@ jobs:
         with:
           name: jacoco-report
           path: build/reports/jacoco/
+
+  archive:
+    name: Archive job results
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: 'temurin'
+      - name: Run the Gradle package task
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: jar shadowjar
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: jars
+          path: |
+            build/libs/*.jar
