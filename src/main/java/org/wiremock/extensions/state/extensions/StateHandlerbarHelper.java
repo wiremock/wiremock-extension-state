@@ -51,10 +51,10 @@ public class StateHandlerbarHelper extends HandlebarsHelper<Object> {
 
     @Override
     public Object apply(Object o, Options options) {
-        String contextName = options.hash("context");
-        String property = options.hash("property");
-        String list = options.hash("list");
-        String defaultValue = options.hash("default");
+        String contextName = Optional.ofNullable(options.hash("context")).map(Object::toString).orElse(null);
+        String property = Optional.ofNullable(options.hash("property")).map(Object::toString).orElse(null);
+        String list = Optional.ofNullable(options.hash("list")).map(Object::toString).orElse(null);
+        String defaultValue = Optional.ofNullable(options.hash("default")).map(Object::toString).orElse(null);
         if (StringUtils.isEmpty(contextName)) {
             return handleError("'context' cannot be empty");
         }
