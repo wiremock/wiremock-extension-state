@@ -25,6 +25,11 @@ dependencies {
     }
 }
 
+java {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
+
 shadowJar {
     relocate "com.github.ben-manes.caffeine", 'wiremock.com.github.ben-manes.caffeine'
     relocate "com.github.jknack", 'wiremock.com.github.jknack'
@@ -33,6 +38,7 @@ shadowJar {
 test {
     finalizedBy jacocoTestReport
 }
+
 jacocoTestReport {
     dependsOn test
     reports {

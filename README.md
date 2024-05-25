@@ -170,9 +170,11 @@ the `GET` won't have any knowledge of the previous post.
 
 | `wiremock-state-extension` version | `WireMock` version |
 |------------------------------------|--------------------|
-| `0.0.3`+                           | `3.0.0-beta-11`+   |
-| `0.0.6`+                           | `3.0.0-beta-14`+   |
+| `0.7.0`+                           | `3.6.0`+           |
+| `0.5.1`+                           | `3.3.1`+           |
 | `0.1.0`+                           | `3.0.0`+           |
+| `0.0.6`+                           | `3.0.0-beta-14`+   |
+| `0.0.3`+                           | `3.0.0-beta-11`+   |
 
 ## Installation
 

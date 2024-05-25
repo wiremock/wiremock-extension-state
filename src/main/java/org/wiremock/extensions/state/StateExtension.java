@@ -18,7 +18,6 @@ package org.wiremock.extensions.state;
 import com.github.tomakehurst.wiremock.extension.Extension;
 import com.github.tomakehurst.wiremock.extension.ExtensionFactory;
 import com.github.tomakehurst.wiremock.extension.WireMockServices;
-import com.github.tomakehurst.wiremock.extension.responsetemplating.TemplateEngine;
 import com.github.tomakehurst.wiremock.store.Store;
 import org.wiremock.extensions.state.extensions.DeleteStateEventListener;
 import org.wiremock.extensions.state.extensions.RecordStateEventListener;
@@ -28,7 +27,6 @@ import org.wiremock.extensions.state.extensions.TransactionEventListener;
 import org.wiremock.extensions.state.internal.ContextManager;
 import org.wiremock.extensions.state.internal.TransactionManager;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -51,26 +49,22 @@ import java.util.List;
  */
 public class StateExtension implements ExtensionFactory {
 
-    private final StateTemplateHelperProviderExtension stateTemplateHelperProviderExtension;
-    private final RecordStateEventListener recordStateEventListener;
-    private final DeleteStateEventListener deleteStateEventListener;
-    private final TransactionEventListener transactionEventListener;
-    private final StateRequestMatcher stateRequestMatcher;
+    private final Store<String, Object> store;
 
     public StateExtension(Store<String, Object> store) {
-        var transactionManager = new TransactionManager(store);
-        var contextManager = new ContextManager(store, transactionManager);
-        this.stateTemplateHelperProviderExtension = new StateTemplateHelperProviderExtension(contextManager);
-        var templateEngine = new TemplateEngine(stateTemplateHelperProviderExtension.provideTemplateHelpers(), null, Collections.emptySet(), false);
-
-        this.recordStateEventListener = new RecordStateEventListener(contextManager, templateEngine);
-        this.deleteStateEventListener = new DeleteStateEventListener(contextManager, templateEngine);
-        this.transactionEventListener = new TransactionEventListener(transactionManager);
-        this.stateRequestMatcher = new StateRequestMatcher(contextManager, templateEngine);
+        this.store = store;
     }
 
     @Override
     public List<Extension> create(WireMockServices services) {
+        var transactionManager = new TransactionManager(store);
+        var contextManager = new ContextManager(store, transactionManager);
+        var stateTemplateHelperProviderExtension = new StateTemplateHelperProviderExtension(contextManager);
+        var recordStateEventListener = new RecordStateEventListener(contextManager, services);
+        var deleteStateEventListener = new DeleteStateEventListener(contextManager, services);
+        var transactionEventListener = new TransactionEventListener(transactionManager);
+        var stateRequestMatcher = new StateRequestMatcher(contextManager, services);
+
         return List.of(
             recordStateEventListener,
             deleteStateEventListener,
