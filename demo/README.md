@@ -102,7 +102,7 @@ From directory of this README:
 
 ```shell
 cd ..
-curl -o build/libs/wiremock-standalone-3.4.1.jar https://repo1.maven.org/maven2/org/wiremock/wiremock-standalone/3.4.1/wiremock-standalone-3.4.1.jar
+curl -o build/libs/wiremock-standalone-3.6.0.jar https://repo1.maven.org/maven2/org/wiremock/wiremock-standalone/3.6.0/wiremock-standalone-3.6.0.jar
 ```
 
 ### Step 4: Start WireMock with the State Extension
@@ -111,7 +111,7 @@ From directory of this README:
 
 ```shell
 cd ..
-java -cp build/libs/wiremock-state-extension-standalone-0.6.0-SNAPSHOT.jar:build/libs/wiremock-standalone-3.4.1.jar wiremock.Run --verbose --global-response-templating --root-dir demo/stubs
+java -cp build/libs/wiremock-state-extension-standalone-0.6.0-SNAPSHOT.jar:build/libs/wiremock-standalone-3.6.0.jar wiremock.Run --verbose --global-response-templating --root-dir demo/stubs
 ```
 
 This command starts WireMock with the State Extension enabled.

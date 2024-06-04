@@ -18,8 +18,8 @@ package org.wiremock.extensions.state.extensions;
 import com.github.tomakehurst.wiremock.common.Json;
 import com.github.tomakehurst.wiremock.core.ConfigurationException;
 import com.github.tomakehurst.wiremock.extension.Parameters;
+import com.github.tomakehurst.wiremock.extension.WireMockServices;
 import com.github.tomakehurst.wiremock.extension.responsetemplating.RequestTemplateModel;
-import com.github.tomakehurst.wiremock.extension.responsetemplating.TemplateEngine;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.matching.MatchResult;
 import com.github.tomakehurst.wiremock.matching.RequestMatcherExtension;
@@ -50,12 +50,12 @@ import static org.wiremock.extensions.state.internal.ExtensionLogger.logger;
  */
 public class StateRequestMatcher extends RequestMatcherExtension implements StateExtensionMixin {
 
-    private final TemplateEngine templateEngine;
+    private final WireMockServices wireMockServices;
     private final ContextManager contextManager;
 
-    public StateRequestMatcher(ContextManager contextManager, TemplateEngine templateEngine) {
+    public StateRequestMatcher(ContextManager contextManager, WireMockServices services) {
         this.contextManager = contextManager;
-        this.templateEngine = templateEngine;
+        this.wireMockServices = services;
     }
 
     private static List<Map.Entry<ContextMatcher, Object>> getMatchers(Parameters parameters) {
@@ -139,9 +139,10 @@ public class StateRequestMatcher extends RequestMatcherExtension implements Stat
     }
 
     String renderTemplate(Object context, String value) {
-        return templateEngine.getUncachedTemplate(value).apply(context);
+        return wireMockServices.getTemplateEngine().getUncachedTemplate(value).apply(context);
     }
 
+    @SuppressWarnings("unchecked")
     Object renderTemplateRecursively(Object context, Object value) {
         if (value instanceof Collection) {
             Collection<Object> castedCollection = cast(value, Collection.class);
@@ -162,7 +163,7 @@ public class StateRequestMatcher extends RequestMatcherExtension implements Stat
     private enum ContextMatcher {
 
         property((Context c, Object object) -> {
-            Map<String, Map<String, Object>> mapValue = cast(object, Map.class);
+            @SuppressWarnings("unchecked") Map<String, Map<String, Object>> mapValue = cast(object, Map.class);
             var results = mapValue.entrySet().stream().map(entry -> {
                 var patterns = mapToObject(entry.getValue(), StringValuePattern.class);
                 var propertyValue = c.getProperties().get(entry.getKey());
@@ -177,7 +178,7 @@ public class StateRequestMatcher extends RequestMatcherExtension implements Stat
         }),
 
         list((Context c, Object object) -> {
-            Map<String, Map<String, Map<String, Object>>> mapValue = cast(object, Map.class);
+            @SuppressWarnings("unchecked") Map<String, Map<String, Map<String, Object>>> mapValue = cast(object, Map.class);
             var allResults = mapValue.entrySet().stream().map(listIndexEntry -> {
                 Map<String, String> listEntry;
                 switch (listIndexEntry.getKey()) {

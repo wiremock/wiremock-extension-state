@@ -19,8 +19,8 @@ import com.github.tomakehurst.wiremock.common.Json;
 import com.github.tomakehurst.wiremock.core.ConfigurationException;
 import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.extension.ServeEventListener;
+import com.github.tomakehurst.wiremock.extension.WireMockServices;
 import com.github.tomakehurst.wiremock.extension.responsetemplating.RequestTemplateModel;
-import com.github.tomakehurst.wiremock.extension.responsetemplating.TemplateEngine;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.wiremock.extensions.state.internal.ContextManager;
@@ -47,13 +47,13 @@ import static org.wiremock.extensions.state.internal.ExtensionLogger.logger;
  */
 public class DeleteStateEventListener implements ServeEventListener, StateExtensionMixin {
 
-    private final TemplateEngine templateEngine;
+    private final WireMockServices wireMockServices;
     private final ContextManager contextManager;
 
 
-    public DeleteStateEventListener(ContextManager contextManager, TemplateEngine templateEngine) {
+    public DeleteStateEventListener(ContextManager contextManager, WireMockServices services) {
         this.contextManager = contextManager;
-        this.templateEngine = templateEngine;
+        this.wireMockServices = services;
     }
 
     @Override
@@ -76,7 +76,7 @@ public class DeleteStateEventListener implements ServeEventListener, StateExtens
     }
 
     private String renderTemplate(Object context, String value) {
-        return templateEngine.getUncachedTemplate(value).apply(context);
+        return wireMockServices.getTemplateEngine().getUncachedTemplate(value).apply(context);
     }
 
     private class ListenerInstance {
