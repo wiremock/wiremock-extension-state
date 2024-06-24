@@ -28,6 +28,7 @@ import org.wiremock.extensions.state.internal.StateExtensionMixin;
 import org.wiremock.extensions.state.internal.api.DeleteStateParameters;
 import org.wiremock.extensions.state.internal.model.ResponseTemplateModel;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -67,10 +68,9 @@ public class DeleteStateEventListener implements ServeEventListener, StateExtens
     }
 
     public void beforeResponseSent(ServeEvent serveEvent, Parameters parameters) {
-        var model = Map.of(
-            "request", RequestTemplateModel.from(serveEvent.getRequest()),
-            "response", ResponseTemplateModel.from(serveEvent.getResponse())
-        );
+        final Map<String, Object> model = new HashMap<>();
+        model.putAll(wireMockServices.getTemplateEngine().buildModelForRequest(serveEvent));
+        model.put("response", ResponseTemplateModel.from(serveEvent.getResponse()));
         var configuration = Json.mapToObject(parameters, DeleteStateParameters.class);
         new ListenerInstance(serveEvent.getId().toString(), model, configuration).run();
     }

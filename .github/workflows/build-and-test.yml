@@ -37,7 +37,7 @@ jobs:
           java-version: ${{ matrix.jdk }}
           distribution: 'temurin'
       - name: Run the Gradle package task
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
         with:
           arguments: build check
       - name: Generate coverage badges
@@ -84,7 +84,7 @@ jobs:
           java-version: 11
           distribution: 'temurin'
       - name: Run the Gradle package task
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
         with:
           arguments: jar shadowjar
       - name: Archive production artifacts

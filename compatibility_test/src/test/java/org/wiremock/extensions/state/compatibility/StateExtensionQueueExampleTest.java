@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wiremock.extensions.state.examples;
+package org.wiremock.extensions.state.compatibility;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,13 +47,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 
 /**
- * Sample test for creating a mock for a listing with java.
+ * Sample test for creating a mock for a queue with java.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(SAME_THREAD)
-class StateExtensionListExampleTest {
+class StateExtensionQueueExampleTest {
 
-    private static final String TEST_URL = "/listing";
+    private static final String TEST_URL = "/queue";
     private static final Store<String, Object> store = new CaffeineStore();
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -75,7 +75,7 @@ class StateExtensionListExampleTest {
     }
 
     @Test
-    public void testList() {
+    public void testQueue() {
         var firstNameOne = RandomStringUtils.randomAlphabetic(5);
         var lastNameOne = RandomStringUtils.randomAlphabetic(5);
         var firstNameTwo = RandomStringUtils.randomAlphabetic(5);
@@ -111,13 +111,17 @@ class StateExtensionListExampleTest {
             .get(assertDoesNotThrow(() -> new URI(wm.getRuntimeInfo().getHttpBaseUrl() + TEST_URL)))
             .then()
             .statusCode(HttpStatus.SC_OK)
-            .body("$", Matchers.hasSize(2))
-            .body("[0].id", Matchers.equalTo(idOne))
-            .body("[0].firstName", Matchers.equalTo(firstNameOne))
-            .body("[0].lastName", Matchers.equalTo(lastNameOne))
-            .body("[1].id", Matchers.equalTo(idTwo))
-            .body("[1].firstName", Matchers.equalTo(firstNameTwo))
-            .body("[1].lastName", Matchers.equalTo(lastNameTwo));
+            .body("id", Matchers.equalTo(idOne))
+            .body("firstName", Matchers.equalTo(firstNameOne))
+            .body("lastName", Matchers.equalTo(lastNameOne));
+        given()
+            .accept(ContentType.JSON)
+            .get(assertDoesNotThrow(() -> new URI(wm.getRuntimeInfo().getHttpBaseUrl() + TEST_URL)))
+            .then()
+            .statusCode(HttpStatus.SC_OK)
+            .body("id", Matchers.equalTo(idTwo))
+            .body("firstName", Matchers.equalTo(firstNameTwo))
+            .body("lastName", Matchers.equalTo(lastNameTwo));
     }
 
 
@@ -143,7 +147,7 @@ class StateExtensionListExampleTest {
                     "recordState",
                     Parameters.from(
                         Map.of(
-                            "context", "list",
+                            "context", "queue",
                             "list", Map.of(
                                 "addLast", Map.of(
                                     "id", "{{jsonPath response.body '$.id'}}",
@@ -157,23 +161,31 @@ class StateExtensionListExampleTest {
         );
     }
 
-    private void createGetStub() {
+    private void createGetStub() throws JsonProcessingException {
         wm.stubFor(
             get(urlPathMatching(TEST_URL))
                 .willReturn(
                     WireMock.ok()
                         .withHeader("content-type", "application/json")
-                        .withBody(
-                            "[\n" +
-                                "{{#each (state context='list' property='list' default='[]') }}" +
-                                "  {\n" +
-                                "    \"id\": \"{{id}}\",\n" +
-                                "    \"firstName\": \"{{firstName}}\",\n" +
-                                "    \"lastName\": \"{{lastName}}\"" +
-                                "  }{{#unless @last}},{{/unless}}\n" +
-                                "{{/each}}" +
-                                "]"
+                        .withJsonBody(
+                            mapper.readTree(
+                                mapper.writeValueAsString(Map.of(
+                                        "id", "{{state context='queue' list='[0].id'}}",
+                                        "firstName", "{{state context='queue' list='[0].firstName'}}",
+                                        "lastName", "{{state context='queue' list='[0].lastName'}}"
+                                    )
+                                )
+                            )
                         )
+                )
+                .withServeEventListener(
+                    "deleteState",
+                    Parameters.from(
+                        Map.of(
+                            "context", "queue",
+                            "list", Map.of("deleteFirst", true)
+                        )
+                    )
                 )
         );
     }
