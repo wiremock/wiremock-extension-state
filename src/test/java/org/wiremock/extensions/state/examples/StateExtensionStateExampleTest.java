@@ -73,8 +73,6 @@ class StateExtensionStateExampleTest {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         createGetStub();
         createPostStub();
-
-        wm.saveMappings();
     }
 
     @Test

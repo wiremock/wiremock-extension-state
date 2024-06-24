@@ -28,6 +28,7 @@ import org.wiremock.extensions.state.internal.StateExtensionMixin;
 import org.wiremock.extensions.state.internal.api.RecordStateParameters;
 import org.wiremock.extensions.state.internal.model.ResponseTemplateModel;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,10 +53,9 @@ public class RecordStateEventListener implements ServeEventListener, StateExtens
     }
 
     public void beforeResponseSent(ServeEvent serveEvent, Parameters parameters) {
-        var model = Map.of(
-            "request", RequestTemplateModel.from(serveEvent.getRequest()),
-            "response", ResponseTemplateModel.from(serveEvent.getResponse())
-        );
+        final Map<String, Object> model = new HashMap<>();
+        model.putAll(wireMockServices.getTemplateEngine().buildModelForRequest(serveEvent));
+        model.put("response", ResponseTemplateModel.from(serveEvent.getResponse()));
         var configuration = Json.mapToObject(parameters, RecordStateParameters.class);
         new ListenerInstance(serveEvent.getId().toString(), model, configuration).run();
     }

@@ -7,7 +7,7 @@ buildscript {
 plugins {
     id 'jacoco'
     id 'com.diffplug.spotless' version '6.25.0'
-    id 'org.wiremock.tools.gradle.wiremock-extension-convention' version '0.2.0'
+    id 'org.wiremock.tools.gradle.wiremock-extension-convention' version '0.3.0'
 }
 
 group 'org.wiremock.extensions'
@@ -15,14 +15,17 @@ project.ext {
     versions = [
             caffeine  : '3.1.8',
             handlebars  : '4.3.1',
+            wiremock : '3.7.0'
     ]
 }
 
 dependencies {
+    compileOnly("org.wiremock:wiremock:${versions.wiremock}")
     implementation("com.github.ben-manes.caffeine:caffeine:${versions.caffeine}")
     implementation("com.github.jknack:handlebars-helpers:${versions.handlebars}") {
         exclude group: 'org.mozilla', module: 'rhino'
     }
+    testImplementation("org.wiremock:wiremock:${versions.wiremock}")
 }
 
 java {

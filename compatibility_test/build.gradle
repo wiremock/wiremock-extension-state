@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+group 'org.wiremock.extensions.compatibility'
+project.ext {
+    versions = [
+            wiremock : '3.7.0',
+            stateextension: '0.7.0'
+    ]
+}
+
+dependencies {
+    testImplementation("org.wiremock:wiremock:${versions.wiremock}")
+    testImplementation("org.wiremock.extensions:wiremock-state-extension:${versions.stateextension}")
+    testImplementation('io.rest-assured:rest-assured:5.4.0')
+    testImplementation('org.junit.jupiter:junit-jupiter:5.10.2')
+    testImplementation('org.assertj:assertj-core:3.26.0')
+    testImplementation('org.awaitility:awaitility:4.2.1')
+}
+
+java {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
+
+test {
+    useJUnitPlatform()
+}

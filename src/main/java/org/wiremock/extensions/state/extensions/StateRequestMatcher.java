@@ -97,7 +97,7 @@ public class StateRequestMatcher extends RequestMatcherExtension implements Stat
 
     @Override
     public MatchResult match(Request request, Parameters parameters) {
-        Map<String, Object> model = new HashMap<>(Map.of("request", RequestTemplateModel.from(request)));
+        var model = wireMockServices.getTemplateEngine().buildModelForRequest(request);
         return Optional
             .ofNullable(parameters.getString("hasContext", null))
             .map(template -> hasContext(model, parameters, template))
